@@ -1,0 +1,19 @@
+{
+  "name": "yio-core",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liujunyang/yio-core.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/liujunyang/yio-core/issues"
+  },
+  "homepage": "https://github.com/liujunyang/yio-core#readme"
+}
