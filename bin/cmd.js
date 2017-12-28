@@ -26,7 +26,24 @@ function showHelp () {
 	].join('\n'))
 }
 
-core.set()
+core.set({
+  configName: CONFIG_FILE_NAME,
+  scaffold: {
+    registry: 'https://registry.npmjs.org/',
+    list: [
+      {
+        shortName: 'pure',
+        fullName: 'yio-scaffold-pure'
+      }
+    ],
+    preInstall (installationDir) {
+      const npmrcPath = path.join(installationDir, '.npmrc')
+
+      fse.ensureFileSync(npmrcPath)
+      fse.writeFileSync(npmrcPath,[].join('\n'))
+    }
+  }
+})
 
 inquirer.prompt([
   {
