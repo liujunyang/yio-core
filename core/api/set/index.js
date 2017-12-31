@@ -15,7 +15,6 @@ const checkType = (input, expectedType) => {
 }
 
 module.exports = ({cacheFolder, configName, scaffold} = {}) => {
-	console.log(96)
 	if (cacheFolder) {
 		checkType(cacheFolder, '[Object String]')
 		pathUtil.cacheFolder = cacheFolder
@@ -37,7 +36,7 @@ module.exports = ({cacheFolder, configName, scaffold} = {}) => {
 			scaffoldUtil.preInstall = scaffold.preInstall.bind(scaffoldUtil)
 		}
 
-		if (scaffold.list && scaffold.list.lenth) {
+		if (scaffold.list && scaffold.list.length) {
 			let formattedScaffoldList = []
 
 			scaffold.list.forEach(item => {
