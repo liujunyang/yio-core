@@ -6,5 +6,6 @@
  */
 
 module.exports = {
-	set: require('./api/set/index')
+	set: require('./api/set/index'),
+	init: require('./api/init/index'),
 }

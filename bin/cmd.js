@@ -60,10 +60,11 @@ module.exports = commander => {
 
   commander
     .version('1.0.0')
+    .description('init project.')
     .command('init [scaffoldName]')
     .action(scaffoldName => {
       core.init({scaffoldName})
-    });
+    })
 
   commander.parse(process.argv);
 }
