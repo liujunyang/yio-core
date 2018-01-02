@@ -11,5 +11,13 @@ const md5 = require('md5')
 module.exports = {
 	// console.log('path')
 	configName: '.yiorc',
-	cacheFolder: path.join(process.env.HOME, '.yio')
+	cacheFolder: path.join(process.env.HOME, '.yio'),
+
+	getScaffoldWrapper (scaffoldName) {
+		return path.join(this.cacheFolder, 'scaffold')
+	},
+
+	getScaffoldFolder (scaffoldName) {
+		return path.join(this.getScaffoldWrapper(scaffoldName), scaffoldName)
+	},
 }
