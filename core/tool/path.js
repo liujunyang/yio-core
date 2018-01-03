@@ -20,4 +20,8 @@ module.exports = {
 	getScaffoldFolder (scaffoldName) {
 		return path.join(this.getScaffoldWrapper(scaffoldName), scaffoldName)
 	},
+
+	getScaffoldExecInstallFolder (scaffoldName) {
+		return path.join(this.getScaffoldWrapper(scaffoldName), 'tmp-install-cache', md5(scaffoldName))
+	},
 }

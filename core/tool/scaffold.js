@@ -33,8 +33,21 @@ const getMaps = (() => {
 	}
 })()
 
+const createExecPackageJsonFile = (execInstallFolder, scaffoldName) => {
+	const pkg = path.join(execInstallFolder, 'package.json')
+
+	fse.ensureFileSync(pkg)
+	fse.writeFileSync(pkg, JSON.stringify({
+		name: `installing-${scaffoldName}`,
+		version: '1.0.0',
+	}))
+}
+
 module.exports = {
 	scaffoldList: [],
+
+	preInstall (execInstallFolder) {
+	},
 
 	getFullName (scaffoldName) {
 		const { fullNameMap } = getMaps(this.scaffoldList)
@@ -87,6 +100,22 @@ module.exports = {
 	},
 
 	installScaffold (scaffoldName) {
-		
+		const execInstallFolder = pathUtil.getScaffoldExecInstallFolder(scaffoldName)
+		const scaffoldFolder = pathUtil.getScaffoldFolder(scaffoldName)
+		const scaffoldWrapper = pathUtil.getScaffoldWrapper(scaffoldName)
+
+		createExecPackageJsonFile(execInstallFolder, scaffoldName)
+
+		this.preInstall(execInstallFolder)
+
+		require('child_process').exec(`cd ${execInstallFolder} && npm --registry ${npmUtil.scaffoldRegistry} install ${scaffoldName}@latest`, {
+			stdio: 'inherit'
+		})
+
+		if (fse.pathExistsSync(scaffoldFolder)) {
+			fse.removeSync(scaffoldFolder)
+		}
+
+		// fse.moveSync()
 	},
 }
