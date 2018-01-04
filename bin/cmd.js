@@ -40,6 +40,7 @@ module.exports = commander => {
       ],
       preInstall (installationDir) {
         const npmrcPath = path.join(installationDir, '.npmrc')
+        console.log(80, npmrcPath)
 
         fse.ensureFileSync(npmrcPath)
         fse.writeFileSync(npmrcPath,[].join('\n'))

@@ -23,6 +23,7 @@
     "get-version-l": "^1.0.0",
     "inquirer": "^4.0.1",
     "md5": "^2.2.1",
+    "merge-dirs": "^0.2.1",
     "registry-url": "^3.1.0"
   }
 }

@@ -7,6 +7,7 @@
 
 const path = require('path')
 const fse = require('fs-extra')
+const mergeDirs = require('merge-dirs')
 const getVersion = require('get-version-l')
 
 const npmUtil = require('./npm')
@@ -112,10 +113,18 @@ module.exports = {
 			stdio: 'inherit'
 		})
 
+		// 虽然下面也可以把模块挪到目标位置，但是 overwrite 可能遗留覆盖不了的文件，在这里整体删除
 		if (fse.pathExistsSync(scaffoldFolder)) {
 			fse.removeSync(scaffoldFolder)
 		}
 
-		// fse.moveSync()
+		fse.moveSync(path.join(execInstallFolder, 'node_modules', scaffoldName), scaffoldFolder, {overwrite: true})
+
+		// 在 npm5 3 不同版本，模块依赖可能和模块本身平级平铺，这里的作用是把可能平铺的依赖放进模块的 node_modules 子文件夹
+		console.log('merging node_modules...')
+		mergeDirs.default(path.join(execInstallFolder, 'node_modules'), path.join(scaffoldFolder, 'node_modules'), 'overwrite');
+		console.log('merging node_modules done')
+
+		fse.removeSync(execInstallFolder)
 	},
 }
