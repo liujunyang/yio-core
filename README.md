@@ -2,7 +2,7 @@
 
 ## 关于 [`commander`](https://github.com/tj/commander.js/)
 
-## 关于 `commander` 中的命令行 `-` `--`
+### 关于 `commander` 中的命令行 `-` `--`
 在 `commander` 中的命令行中，参数带一个 `-`, 表示这是一个简写的参数，如 `npm -v`, 用 `-` 而且是多个字母的话是表示多个参数，如 `-ab` 其实表示的是 `-a` `-b`。如果要写多个字母而表示是一个参数的话，要用 `--`, 如 `npm --version`。
 
 [`Short flags may be passed as a single arg, for example -abc is equivalent to -a -b -c. Multi-word options such as "--template-engine" are camel-cased, becoming program.templateEngine etc.`](https://github.com/tj/commander.js/)
