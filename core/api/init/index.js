@@ -35,8 +35,29 @@ function choseScaffold () {
   })
 }
 
+function getTemplateDirPath (scaffoldName) {
+	return new Promise((resolve, reject) => {
+		// resolve('a100')
+		const scaffoldFolder = pathUtil.getScaffoldFolder(scaffoldName)
+		const demoFolder = path.join(scaffoldFolder, 'project-template')
+
+		console.log(33, demoFolder)
+		const templateNames = []
+
+		if (fse.pathExistsSync(demoFolder)) {
+			fse.readDirSync(demoFolder).forEach(fileName => {
+				templateNames.push(fileName)
+			})
+		}
+	})
+}
+
 function* downloadTemplate (cwd, scaffoldName) {
 	scaffoldUtil.ensureScaffoldLatest(scaffoldName)
+
+	const targetTemplateDirPath = yield getTemplateDirPath(scaffoldName)
+
+	console.log(89, targetTemplateDirPath)
 }
 
 module.exports = ({ignored = [pathUtil.configName, /readme\.md/i], scaffoldName = ''} = {}) => {
