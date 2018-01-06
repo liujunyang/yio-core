@@ -15,7 +15,7 @@ module.exports = commander => {
 
   const CONFIG_FILE_NAME = '.yiorc'
   const CURRENT_FOLDER = process.cwd()
-  const isConfigExist = fse.pathExistsSync(path.join(CURRENT_FOLDER, CONFIG_FILE_NAME))
+  const IS_CONFIG_EXISTS = fse.pathExistsSync(path.join(CURRENT_FOLDER, CONFIG_FILE_NAME))
 
   function showHelp () {
     console.log([
@@ -64,8 +64,31 @@ module.exports = commander => {
     .description('init project.')
     .command('init [scaffoldName]')
     .action(scaffoldName => {
+      // 没有输入 scaffoldName 的话，在init中有 inquirer
       core.init({scaffoldName})
     })
 
-  commander.parse(process.argv);
+  commander
+    .version('1.0.0')
+    .description('run')
+    .command('run <task>')
+    .option('-n, --no-watch', 'watch file changes')
+    .action((task, options) => {
+      const {watch} = options
+
+      if (!IS_CONFIG_EXISTS) {
+        core.init().then(() => {
+          core.scaffold.run(task, {watch})
+        })
+      } else {
+        core.scaffold.run(task, {watch})
+      }
+
+    })
+
+  commander.parse(process.argv)
+
+  if (!commander.args.length) {
+    showHelp()
+  }
 }

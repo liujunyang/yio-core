@@ -8,4 +8,7 @@
 module.exports = {
 	set: require('./api/set/index'),
 	init: require('./api/init/index'),
+	scaffold: {
+		run: require('./api/scaffold/run/index'),
+	},
 }
