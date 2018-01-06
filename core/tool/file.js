@@ -61,6 +61,7 @@ module.exports = {
 	renameInvisableFiles(dir) {
     // rename files like gitignore/npmrc/npmignor to .gitignore/.npmrc/.npmignor
     const arr = fse.readdirSync(dir)
+    console.log('tool.file.renameInvisableFiles'.yellow, arr)
 
     arr.forEach((filename) => {
     	if (/^((gitignore)|(npmrc)|(npmignore))$/.test(filename)) {

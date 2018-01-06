@@ -13,7 +13,7 @@ module.exports = commander => {
   const inquirer = require('inquirer')
   const core = require('../core/index')
 
-  const CONFIG_FILE_NAME = '.biorc'
+  const CONFIG_FILE_NAME = '.yiorc'
   const CURRENT_FOLDER = process.cwd()
   const isConfigExist = fse.pathExistsSync(path.join(CURRENT_FOLDER, CONFIG_FILE_NAME))
 
@@ -40,7 +40,7 @@ module.exports = commander => {
       ],
       preInstall (installationDir) {
         const npmrcPath = path.join(installationDir, '.npmrc')
-        console.log(80, npmrcPath)
+        console.log('core.set.preInstall'.yellow, npmrcPath)
 
         fse.ensureFileSync(npmrcPath)
         fse.writeFileSync(npmrcPath,[].join('\n'))

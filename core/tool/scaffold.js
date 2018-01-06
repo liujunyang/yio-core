@@ -63,6 +63,7 @@ module.exports = {
 	},
 
 	ensureScaffoldLatest (scaffoldName) {
+		console.log('tool.scaffold.ensureScaffoldLatest'.yellow, scaffoldName)
 		if (!this._isScaffoldExists(scaffoldName)) {
 			console.log(`installing scaffold ${scaffoldName}...`)
 			this.installScaffold(scaffoldName)
@@ -70,7 +71,7 @@ module.exports = {
 			return;
 		}
 
-		if (!this._isScaffoldOutdate(scaffoldName)) {
+		if (this._isScaffoldOutdate(scaffoldName)) {
 			console.log(`updating scaffold ${scaffoldName}...`)
 			this.installScaffold(scaffoldName)
 			console.log(`scaffold ${scaffoldName} updated successfully`)
@@ -79,6 +80,7 @@ module.exports = {
 
 	_isScaffoldExists (scaffoldName) {
 		const pkg = path.join(pathUtil.getScaffoldFolder(scaffoldName), 'package.json')
+		console.log('tool.scaffold._isScaffoldExists'.yellow, pkg)
 
 		if (!fse.pathExistsSync(pkg)) {
 			console.log(`\n${scaffoldName}/package.json is not found at local\n`)
@@ -93,7 +95,10 @@ module.exports = {
 		const currentVersion = require(pkg).version
 		const latestVersion = getVersion(scaffoldName)
 
+		console.log('tool.scaffold._isScaffoldOutdate'.yellow, currentVersion, latestVersion)
+
 		if (latestVersion && latestVersion !== currentVersion) {
+			console.log('_isScaffoldOutdate true')
 			return true
 		}
 
@@ -104,6 +109,9 @@ module.exports = {
 		const execInstallFolder = pathUtil.getScaffoldExecInstallFolder(scaffoldName)
 		const scaffoldFolder = pathUtil.getScaffoldFolder(scaffoldName)
 		const scaffoldWrapper = pathUtil.getScaffoldWrapper(scaffoldName)
+
+		console.log('execInstallFolder:', execInstallFolder)
+		console.log('scaffoldFolder:', scaffoldFolder)
 
 		createExecPackageJsonFile(execInstallFolder, scaffoldName)
 
