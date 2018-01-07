@@ -7,8 +7,12 @@
 
 const co = require('co')
 const ora = require('ora')
+const md5 = require('md5')
 const path = require('path')
+const ps = require('ps-node')
 const fse = require('fs-extra')
+const killPort = require('kill-port')
+const findProcess = require('find-process')
 const syncDirectory = require('sync-directory')
 
 const pathUtil = require('../../../tool/path')
@@ -56,6 +60,65 @@ function runSyncDirectory (from, to, {watch}) {
 	return watcher
 }
 
+function* killPreProcess () {
+	const preProcessRecordFile = path.join(pathUtil.cacheFolder, 'pre-process-record.json')
+
+	if (!fse.pathExistsSync(preProcessRecordFile)) {
+		return;
+	}
+
+	const map = require(preProcessRecordFile)
+	const obj = map[md5(process.cwd())]
+
+	if (!obj) {
+		return;
+	}
+
+	const killPro = pid => {
+		return new Promise(resolve => {
+			ps.kill(pid, () => {
+				resolve(`kill pid ${pid} done.`)
+			})
+		})
+	}
+
+	const _killport = port => {
+		return new Promise(resolve => {
+			findProcess('port', port).then((list) => {
+				if (list[0] && list[0].cmd && list[0].cmd.split(' ').indexOf(`userFolder=${process.cwd()}`) !== -1) {
+					killPort(port).then(() => {
+						resolve(`kill port ${port} done.`)
+					}).catch(() => {
+						resolve(`kill port ${port} done.`)
+					});
+				} else {
+					resolve(`kill port ${port} done.`)
+				}
+			});
+		})
+	}
+
+	const {main: mainId, children} = obj
+
+	for (let i = 0; i < children.length; i++) {
+		const item = children[i]
+
+		if (item.pro) {
+			yield killPro(item.pid)
+		}
+
+		if (item.port) {
+			yield _killport(item.port)
+		} else if (item.ports) {
+			for (let j = 0; j < item.ports.length; j++) {
+				yield _killport(item.ports[j])
+			}
+		}
+	}
+
+	yield killPro(mainId)
+}
+
 module.exports = (currentEnv, {configName = pathUtil.configName, watch = true} = {}) => {
 	co(function* () {
 		const cwd = process.cwd()
@@ -71,6 +134,8 @@ module.exports = (currentEnv, {configName = pathUtil.configName, watch = true} =
 		scaffoldUtil.ensureScaffoldLatest(scaffoldName)
 
 		const watcher = runSyncDirectory(cwd, workspaceFolder, { watch });
+
+		yield killPreProcess()
 	})
 }
 
