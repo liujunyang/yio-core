@@ -6,6 +6,7 @@
  */
 
 const co = require('co')
+const ora = require('ora')
 const path = require('path')
 const fse = require('fs-extra')
 const pathUtil = require('../../../tool/path')
@@ -50,8 +51,8 @@ module.exports = (currentEnv, {configName = pathUtil.configName, watch = true} =
 		checkScaffoldExist(configFile, configName)
 
 		const scaffoldName = scaffoldUtil.getFullName(getScaffoldName(configFile))
-		const workSpaceFolder = pathUtil.getWorkspaceFolder({cwd, scaffoldName})
-		console.log('api.scaffold.run'.yellow, workSpaceFolder)
+		const workspaceFolder = pathUtil.getWorkspaceFolder({cwd, scaffoldName})
+		console.log('api.scaffold.run'.yellow, workspaceFolder)
 
 		scaffoldUtil.ensureScaffoldLatest(scaffoldName)
 
