@@ -9,8 +9,11 @@ const co = require('co')
 const ora = require('ora')
 const path = require('path')
 const fse = require('fs-extra')
+const syncDirectory = require('sync-directory')
+
 const pathUtil = require('../../../tool/path')
 const scaffoldUtil = require('../../../tool/scaffold')
+
 
 function checkConfig (cwd, configName) {
 	const configFile = path.join(cwd, configName)
@@ -39,7 +42,18 @@ function checkScaffoldExist (configFile, configName) {
 }
 
 function runSyncDirectory (from, to, {watch}) {
-	const spinner = ora('file synchronization running...').start();
+	const spinner = ora('file synchronization running...').start()
+
+	const watcher = syncDirectory(from, to, {
+		watch,
+		type: 'hardlink',
+		// 第二个参数其实是 .yio 文件夹名
+		exclude: [/((\.git)|(\.DS_Store))/i, pathUtil.cacheFolder.replace(/\/$/, '').split('/').pop()],
+	})
+
+	spinner.succeed('file synchronization done.').stop()
+
+	return watcher
 }
 
 module.exports = (currentEnv, {configName = pathUtil.configName, watch = true} = {}) => {
@@ -52,7 +66,7 @@ module.exports = (currentEnv, {configName = pathUtil.configName, watch = true} =
 
 		const scaffoldName = scaffoldUtil.getFullName(getScaffoldName(configFile))
 		const workspaceFolder = pathUtil.getWorkspaceFolder({cwd, scaffoldName})
-		console.log('api.scaffold.run'.yellow, workspaceFolder)
+		console.log('api.scaffold.run.exports'.yellow, workspaceFolder)
 
 		scaffoldUtil.ensureScaffoldLatest(scaffoldName)
 
