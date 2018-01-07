@@ -38,7 +38,7 @@ function checkScaffoldExist (configFile, configName) {
 	}
 }
 
-function runSyncDirectory (cwd, workspaceFolder, {watch}) {
+function runSyncDirectory (from, to, {watch}) {
 	const spinner = ora('file synchronization running...').start();
 }
 

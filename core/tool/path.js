@@ -26,13 +26,14 @@ module.exports = {
 	},
 
 	getWorkspaceFolder ({cwd, scaffoldName}) {
-		console.log(90,path.dirname(cwd))
 		const currentDirName = cwd.replace(path.dirname(cwd), '').replace(/^\//, '').replace(/\/$/, '')
 		const scaffoldFolder = this.getScaffoldFolder(scaffoldName)
 		const workspaceFolder = path.join(scaffoldFolder, 'workspace', md5(cwd), currentDirName)
-		console.log(91, cwd, currentDirName)
-		console.log(92, scaffoldFolder)
-		console.log(93, workspaceFolder)
+
+		console.log('tool.path.getWorkspaceFolder'.yellow, cwd, currentDirName)
+		console.log('tool.path.getWorkspaceFolder'.yellow, scaffoldFolder)
+		console.log('tool.path.getWorkspaceFolder'.yellow, workspaceFolder)
+		
 		return workspaceFolder
 	},
 }
