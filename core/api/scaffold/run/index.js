@@ -204,7 +204,7 @@ module.exports = (taskName, {configName = pathUtil.configName, watch = true} = {
 				process.kill(scaffoldProcess.pid)
 			} catch (e){}
 
-			wacher && wacher.close()
+			watcher && watcher.close()
 			process.exit()
 		}
 
