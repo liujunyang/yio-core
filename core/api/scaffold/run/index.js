@@ -16,8 +16,10 @@ const findProcess = require('find-process')
 const syncDirectory = require('sync-directory')
 
 const pathUtil = require('../../../tool/path')
+const network = require('../../../tool/network')
 const scaffoldUtil = require('../../../tool/scaffold')
 
+require('child-process-close')
 
 function checkConfig (cwd, configName) {
 	const configFile = path.join(cwd, configName)
@@ -58,6 +60,36 @@ function runSyncDirectory (from, to, {watch}) {
 	spinner.succeed('file synchronization done.').stop()
 
 	return watcher
+}
+
+function runScaffold ({taskName, cwd, workspaceFolder, scaffoldName, debugPort}) {
+	console.log(900)
+	const scaffoldFolder = pathUtil.getScaffoldFolder(scaffoldName)
+	const child = require('child_process').fork('./yio-entry.js', [
+			`taskName=${taskName}`,
+			`userDir=${cwd}`,
+			`srcDir=${workspaceFolder}`,
+			`distDir=${path.join(cwd, './build')}`,
+			`port=${debugPort}`,
+		], {
+		cwd: scaffoldFolder,
+		silent: true
+	})
+
+	child.stdout.setEncoding('utf8')
+	child.stdout.on('data', (data) => {
+		if (data) {
+			console.log(data.toString())
+		}
+	})
+
+	child.stderr.on('data', (data) => {
+		if (data) {
+			console.log(data.toString())
+		}
+	})
+
+	return child
 }
 
 function* killPreProcess () {
@@ -119,7 +151,21 @@ function* killPreProcess () {
 	yield killPro(mainId)
 }
 
-module.exports = (currentEnv, {configName = pathUtil.configName, watch = true} = {}) => {
+function recordPreProcess (main, children) {
+	const preProcessRecordFile = path.join(pathUtil.cacheFolder, 'pre-process-record.json');
+
+	fse.ensureFileSync(preProcessRecordFile)
+
+	const obj = {};
+	obj[md5(process.cwd())] = {
+		main,
+		children,
+	};
+
+	fse.writeFileSync(preProcessRecordFile, JSON.stringify(obj));
+}
+
+module.exports = (taskName, {configName = pathUtil.configName, watch = true} = {}) => {
 	co(function* () {
 		const cwd = process.cwd()
 		const configFile = path.join(cwd, configName)
@@ -136,6 +182,38 @@ module.exports = (currentEnv, {configName = pathUtil.configName, watch = true} =
 		const watcher = runSyncDirectory(cwd, workspaceFolder, { watch });
 
 		yield killPreProcess()
+
+		const debugPort = yield network.getFreePort(9000)
+		console.log(`\nscaffold: ${scaffoldUtil.getShortName(scaffoldName).green}; task: ${taskName.green}; port: ${debugPort}\n`)
+
+		const scaffoldProcess = runScaffold({
+			taskName,
+			cwd,
+			workspaceFolder,
+			scaffoldName,
+			debugPort,
+		})
+
+		recordPreProcess(process.pid, [{
+			pid: scaffoldProcess.pid,
+			ports: [debugPort]
+		}])
+
+		function afterKillPort () {
+			try {
+				process.kill(scaffoldProcess.pid)
+			} catch (e){}
+
+			wacher && wacher.close()
+			process.exit()
+		}
+
+		// 用户按下 ctrl + c
+		process.on('SIGINT', () => {
+			killPort(debugPort)
+				.then(afterKillPort)
+				.catch(afterKillPort)
+		})
 	})
 }
 
