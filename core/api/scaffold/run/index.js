@@ -63,7 +63,6 @@ function runSyncDirectory (from, to, {watch}) {
 }
 
 function runScaffold ({taskName, cwd, workspaceFolder, scaffoldName, debugPort}) {
-	console.log(900)
 	const scaffoldFolder = pathUtil.getScaffoldFolder(scaffoldName)
 	const child = require('child_process').fork('./yio-entry.js', [
 			`taskName=${taskName}`,
