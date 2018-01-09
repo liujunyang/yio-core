@@ -21,10 +21,6 @@ module.exports = commander => {
     console.log([
       ` - init                >  ${'yio init [scaffoldName]'.green}`,
       ` - run                 >  ${'yio run <task> [--no-watch]'.green}`,
-      ` - mock                >  ${'yio mock [port]'.green}`,
-      ` - show scaffold       >  ${'yio scaffold show <scaffoldName>'.green}`,
-      ` - create scaffold     >  ${'yio scaffold create'.green}`,
-      ` - help                >  ${'yio help'.green}\n`,
     ].join('\n'))
   }
 
