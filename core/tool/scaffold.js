@@ -117,7 +117,7 @@ module.exports = {
 
 		this.preInstall(execInstallFolder)
 
-		require('child_process').exec(`cd ${execInstallFolder} && npm --registry ${npmUtil.scaffoldRegistry} install ${scaffoldName}@latest`, {
+		require('child_process').execSync(`cd ${execInstallFolder} && npm --registry ${npmUtil.scaffoldRegistry} install ${scaffoldName}@latest`, {
 			stdio: 'inherit'
 		})
 
@@ -127,6 +127,7 @@ module.exports = {
 		}
 
 		fse.moveSync(path.join(execInstallFolder, 'node_modules', scaffoldName), scaffoldFolder, {overwrite: true})
+		
 
 		// 在 npm5 3 不同版本，模块依赖可能和模块本身平级平铺，这里的作用是把可能平铺的依赖放进模块的 node_modules 子文件夹
 		console.log('merging node_modules...')
